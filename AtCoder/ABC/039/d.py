@@ -20,24 +20,20 @@ def main():
         A[i+1] = '#' + str(input().strip()) + '#'
 
     ans = [['.' for _ in range(W)] for _ in range(H)]
-    ori = []
-    blk = []
+    cont = set()
+    blk = set()
     for i in range(1, H+1):
         for j in range(1, W+1):
             if A[i][j] == '#':
-                blk.append((i, j))
+                blk.add((i, j))
 
                 if is_ori(A, i, j):
-                    ori.append((i, j))
                     ans[i-1][j-1] = '#'
+                    for s in range(3):
+                        for t in range(3):
+                            cont.add((i-1+s, j-1+t))
 
-    for a, b in blk:
-        check = []
-        for i in range(3):
-            for j in range(3):
-                check.append((a - 1 + i, b - 1 + j) in ori)
-
-        if not any(check):
+    if len(blk - cont) > 0:
             print('impossible')
             return 0
 
