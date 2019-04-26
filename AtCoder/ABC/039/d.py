@@ -41,6 +41,7 @@ def main():
             print('impossible')
             return 0
 
+    print('possible')
     for a in ans:
         print(''.join(a))
 
