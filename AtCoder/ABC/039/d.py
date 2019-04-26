@@ -5,7 +5,7 @@ def is_ori(A, a, b):
     col = []
     for i in range(3):
         for j in range(3):
-            col.append(A[i-1][j-1])
+            col.append(A[a+i-1][b+j-1])
 
     return all([c == '#' for c in col])
 
