@@ -12,7 +12,7 @@ def f(A, i, j, memo):
         if 0 <= i+s < H and 0 <= j+t < W and A[i][j] < A[i+s][j+t]:
             res += f(A, i+s, j+t, memo)
 
-    res %= 10**9 + 7
+    res %= (10**9 + 7)
     memo[i][j] = res
     return res 
 
@@ -22,15 +22,12 @@ def main():
     H, W = map(int, input().split())
     A = [list(map(int, input().split())) for _ in range(H)]
 
-    memo = [[0 for _ in range(W)] for _ in range(H)]
+    memo = [[0] * W for _ in range(H)]
     for i in range(H):
         for j in range(W):
-            if memo[i][j] == 0:
-                f(A, i, j, memo)
+            f(A, i, j, memo)
 
-    MOD = 10**9 + 7
-    ans = sum(sum(m) % MOD for m in memo)
-    return ans % MOD
+    return sum(sum(m) for m in memo) % (10**9 + 7)
 
 
 if __name__ == '__main__':
