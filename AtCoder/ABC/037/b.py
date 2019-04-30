@@ -1,5 +1,4 @@
 import sys
-from itertools import accumulate
 
 def main():
     input = sys.stdin.readline
@@ -7,11 +6,10 @@ def main():
     A = [0 for _ in range(N)]
     for _ in range(Q):
         l, r, t = map(int, input().split())
-        A[l-1] += t
-        A[r] -= t
+        for i in range(l-1, r):
+            A[i] = t
 
-    A = list(accumulate(A))
-    return print(*A)
+    return print(*A, sep='\n')
 
 
 if __name__ == '__main__':
