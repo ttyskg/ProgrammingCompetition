@@ -1,50 +1,46 @@
 import sys
-from itertools import accumulate
 
 def main():
     input = sys.stdin.readline
     H, W, N = map(int, input().split())
-    r, c = map(int, input().split())
-    S = str(input().strip())
-    T = str(input().strip())
+    ini_r, ini_c = map(int, input().split())
+    S = str(input().strip())[::-1]
+    T = str(input().strip())[::-1]
 
-    R = c
-    L = c
-    U = r
-    D = r
+    dp = [0] * (N+1)
+    dp[0] = (1, H, 1, W)
+    for i in range(N):
+        s, t, = S[i], T[i]
+        d, u, l, r = dp[i]
 
-    i = 0
-    while i < N:
-        s, t = S[i], T[i]
-
-        if s == 'R':
-            R += 1
-        elif s == 'L':
-            L -= 1
-        elif s == 'U':
-            U -= 1
+        if t == 'L':
+            r = min(W, r+1)
+        elif t == 'R':
+            l = max(1, l-1)
+        elif t == 'U':
+            u = min(H, u+1)
         else:
-            D += 1
+            d = max(1, d-1)
 
-        if R > W or L <= 0 or U <= 0 or D > H:
+        if s == 'L':
+            l += 1
+        elif s == 'R':
+            r -= 1
+        elif s == 'U':
+            d += 1
+        else:
+            u -= 1
+
+        if u < d or r < l:
             return 'NO'
 
-        if t == 'R':
-            L += 1
-            L = min(L, W)
-        elif t == 'L':
-            R -= 1
-            R = max(R, 1)
-        elif t == 'U':
-            D -= 1
-            D = max(D, 1)
-        else:
-            U += 1
-            U = min(U, H)
+        dp[i+1] = (d, u, l, r)
 
-        i += 1
-
-    return 'YES' 
+    d, u, l, r = dp[N]
+    if not(d <= ini_r <= u and l <= ini_c <= r):
+        return 'NO'
+    else:
+        return 'YES'
 
 
 if __name__ == '__main__':
