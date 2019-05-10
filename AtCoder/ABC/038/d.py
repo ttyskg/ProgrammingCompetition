@@ -1,39 +1,27 @@
+#ref: https://atcoder.jp/contests/abc038/submissions/747025
+
 import sys
-from collections import deque
+from bisect import bisect_left
+
 
 def main():
     input = sys.stdin.readline
     N = int(input())
-    d = dict()
-    for _ in range(N):
-        w, h = map(int, input().split())
-        
-        if w in d:
-            d[w] = min(d[w], h)
-        else:
-            d[w] = h
 
-    W = sorted(list(d.keys()))
-    H = [d[w] for w in W]
+    box = [tuple(map(int, input().split())) for _ in range(N)]
+    box = sorted(box, key=lambda x: (x[0], -x[1]))
+    W = [w for _, w in box]
 
-    q = deque()
-    q.append((H[0], 1))
-    for i in range(1, len(H)):
-        q_ = deque()
-        while len(q) > 0:
-            h, cnt = q.popleft()
+    inf = max(W) + 1
+    nested = [inf] * N
 
-            if h > H[i]:
-                q_.append((H[i], cnt+1))
-            else:
+    # The largest index of the non-INF int is equal to the number of nesting.
+    for w in W:
+        i = bisect_left(nested, w)
+        nested[i] = w
 
-    dp =[[0 for _ in range(len(H))] for _ in range(len(H))]
-    dp[0][0] = (H[0], 1)
-    for i in range(1, H):
-        for j in range(i):
-            dp[i]
-
-    return ans
+    max_nest = bisect_left(nested, inf)
+    return max_nest
 
 
 if __name__ == '__main__':
