@@ -1,47 +1,41 @@
 import sys
-from itertools import combinations
-
-
-def dfs(state, d=dict()):
-    print(state)
-    if max(state) == 1 and sum(state) == 1:  # Last one supplement.
-        return 1
-
-    if state in d:
-        return d[state]
-
-    remaining = []
-    for i, s in enumerate(state):
-        if s > 0:
-            remaining.append(i)
-    #remaining = [i for (i, s) in enumerate(state) is s > 0]
-    cnt = 0
-    n = 1
-    while n <= len(remaining):
-        for consumption in combinations(remaining, n):
-            next_state = list(state)
-            for i in consumption:
-                next_state[i] -= 1
-
-            cnt += dfs(tuple(next_state), d)
-
-        n += 1
-
-    cnt %= 10**9 + 7
-    d[state] = cnt
-    return cnt
 
 
 def main():
     input = sys.stdin.readline
+    MOD = 10**9 + 7
     N, M = map(int, input().split())
-    supplements = [0] * M
-    for _ in range(N):
-        s = int(input())
-        supplements[s-1] += 1
+    supplements = [0] + [int(input()) for _ in range(N)]
 
-    state = tuple(supplements)
-    return dfs(state)
+    # dp[i] means the number of ways to eat up to the i-th supplements.
+    dp = [0] * (N+1)
+    dp[0] = 1
+    
+    # Memorizing the ingested supplements.
+    ingested = set()
+
+    p_acc = 0  # Partial accumulation of the dp table: sum(dp[left:right]).
+    left = 0
+    for right, sup in enumerate(supplements[1:], start=1):
+        if sup in ingested:
+            while sup in ingested:
+                ingested.remove(supplements[left+1])
+
+                p_acc -= dp[left]
+                p_acc %= MOD
+
+                left += 1
+
+        
+        ingested.add(sup)
+
+        # Update partial accumulation.
+        p_acc += dp[right-1]
+        p_acc %= MOD
+
+        dp[right] = p_acc
+
+    return dp[N]
 
 
 if __name__ == '__main__':
