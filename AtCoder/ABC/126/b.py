@@ -2,14 +2,14 @@ import sys
 
 def main():
     input = sys.stdin.readline
-    S = str(input().strip())
+    S = int(input())
 
-    a = int(S[:2])
-    b = int(S[2:])
+    a = S // 100
+    b = S % 100
 
-    if (a > 12 and 0 < b <= 12) or (a == 0 and 0 < b <= 12):
+    if (a > 12 or a == 0) and 0 < b <= 12:
         return 'YYMM'
-    elif (0 < a <= 12 and b > 12) or (0 < a <= 12 and b == 0):
+    elif 0 < a <= 12 and (b > 12 or b == 0):
         return 'MMYY'
     elif 0 < a <= 12 and 0 < b <= 12:
         return 'AMBIGUOUS'
