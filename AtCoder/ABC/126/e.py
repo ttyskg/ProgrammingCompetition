@@ -3,8 +3,8 @@ import sys
 
 class UnionFind:
     def __init__(self, n):
-        self.root = [i for i in range(n+1)]
-        self.rank = [0] * (n+1)
+        self.root = [i for i in range(n)]
+        self.rank = [0] * n
 
     def find(self, x):
         if self.root[x] == x:
@@ -36,10 +36,10 @@ def main():
     uft = UnionFind(N)
     for _ in range(M):
         x, y, _ = map(int, input().split())
-        uft.unite(x, y)
+        uft.unite(x-1, y-1)
 
     root = set()
-    for i in range(1, N+1):
+    for i in range(N):
         root.add(uft.find(i))
 
     return len(root)
