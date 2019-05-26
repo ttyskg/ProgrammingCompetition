@@ -1,42 +1,38 @@
 import sys
-
-def f(A, B):
-    n = len(A)
-    if n == 0:
-        return (0, B)
-    if n == 1:
-        return (A[0] , B)
-
-    A.sort()
-    diff = 0
-    for i in range(n-1):
-        diff += A[i+1] - A[i]
-    x = A[-2]
-    return (x, diff + B)
+from heapq import heappop, heappush
 
 
 def main():
     input = sys.stdin.readline
     INF = 10**9 + 1
     Q = int(input())
-    A = []
-    B = 0
-    max_a =  -INF
-    min_a = INF
-    x = -INF
+    left = []
+    right = []
+    min_val = 0
     for _ in range(Q):
         q = list(map(int, input().split()))
         if q[0] == 1:
             a, b = q[1], q[2]
-            B += b
-            if a > max_a:
-                x = max_a
-                max_a = a
 
-            min_a = min(min_a, a)
+            # Update median
+            heappush(left, -a)
+            heappush(right, a)
+
+            left_max = -heappop(left)
+            right_min = heappop(right)
+
+            heappush(left, -min(left_max, right_min))
+            heappush(right, max(left_max, right_min))
+
+            # Update minimum value of f(x)
+            min_val += abs(right_min - left_max)
+            min_val += b
 
         else:
-            print('{} {}'.format(max(x, min_a), B + max_a - min_a))
+            median = -heappop(left)
+            print('{} {}'.format(median, min_val))
+
+            heappush(left, -median)
 
 
 if __name__ == '__main__':
