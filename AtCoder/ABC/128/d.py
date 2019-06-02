@@ -19,7 +19,7 @@ def main():
             cnt = left + right
             while cnt < K and len(heap) > 0:
                 v = heappop(heap)
-                if v > 0:
+                if v >= 0:
                     heappush(heap, v)
                     break
 
