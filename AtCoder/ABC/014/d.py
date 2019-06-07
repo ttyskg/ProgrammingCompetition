@@ -2,23 +2,6 @@ import sys
 from collections import defaultdict, deque
 sys.setrecursionlimit(10**6)
 
-def bfs(d, q, b, cnt=0, visited=set()):
-    q_ = deque()
-    while len(q) > 0:
-        s = q.popleft()
-        if s == b:
-            return cnt
-
-        visited.add(s)
-        for t in d[s]:
-            if t in visited:
-                continue
-
-            q_.append(t)
-
-    return bfs(d, q_, b, cnt+1, visited)
-
-
 def main():
     input = sys.stdin.readline
     N = int(input())
@@ -28,30 +11,42 @@ def main():
         d[x-1].append(y-1)
         d[y-1].append(x-1)
 
-    # Make table of distance from 0-th node:
-    # dist[i] means the distance between 0-th node and i-th node.
-    dist = [0] * N
+    # Make a list of the tree structures.
+    # tree[i] = (depth, parent)
+    tree  = [0] * N  # parent, depth
     q = deque()
-    q.append(0)
-    visited = set()
-    cnt = 0
+    q.append((-1, 0))
+    visited = [False] * N
+    depth  = 0
     while len(q) > 0:
         q_ = deque()
         while len(q) > 0:
-            s = q.popleft()
-            dist[s] = cnt
-
-            visited.add(s)
-            for t in d[s]:
-                if t in visited:
+            parent, child =  q.popleft()
+            tree[child] = (depth, parent)
+            visited[child] = True
+            for gc in d[child]:
+                if visited[gc]:
                     continue
-
-                q_.append(t)
-
+                q_.append((child, gc))
         q = q_
-        cnt += 1
+        depth  += 1
 
-    doubling
+    def dfs(n):
+        depth, parent = tree[n]
+        if parent in doubling:
+            doubling[n] =
+
+
+    doubling = dict()
+    for child in d[0]:
+        doubling[child] = [0]
+
+    visited = [False] * N
+    visited[0] = True
+    for child in d[0]:
+        visited[child] = True
+    q = deque()
+    q.extend(d[0])
 
 
 
