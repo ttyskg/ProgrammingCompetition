@@ -1,7 +1,8 @@
 import sys
 
-
 def dot(A, B, mod):
+    """ The shape of the inner product of A and B is r*c,
+        when the shapes of A and B are r*m and m*c, respectively."""
     r = len(A)
     c = len(B[0])
     m = len(A[0])
@@ -9,7 +10,7 @@ def dot(A, B, mod):
     for i in range(r):
         for j in range(c):
             for k in range(m):
-                res[i][j] += (A[i][k] * B[k][j]) % mod
+                res[i][j] += A[i][k] * B[k][j] % mod
                 res[i][j] %= mod
     return res
 
@@ -29,16 +30,11 @@ def main():
     input = sys.stdin.readline
     L, A, B, M = map(int, input().split())
 
-    cnt = 0
     s = [[0, A%M, 1]]
     for d in range(1, 19):
-        n = 0
-        if 10**(d-1) <= A <= 10**d:
-            n += 1
-
-        div = max(0, (10**d - 1 - A) // B)
-        div = min(div, L-1)
-        n += div - cnt
+        n1 = min(max(0, (10**d - 1 - A) // B + 1), L)
+        n0 = min(max(0, (10**(d-1) - 1 - A) // B + 1), L)
+        n = n1 - n0
         if n == 0:
             continue
 
@@ -47,8 +43,7 @@ def main():
              [0, B%M, 1]]
         s = dot(s, rec_pow(k, n, M), M)
 
-        cnt = div
-        if cnt >= L-1:
+        if n1 >= L:
             break
 
     return s[0][0]
