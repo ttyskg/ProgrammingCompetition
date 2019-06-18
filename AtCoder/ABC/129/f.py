@@ -1,58 +1,57 @@
-import numpy as np
 import sys
 
-def rec_pow(k, n, mod):
-    cnt = 1
-    k1 = k
-    while cnt * 2 <= n:
-        k = np.mod(np.dot(k, k), mod)
-        cnt *= 2
 
-    if cnt == n:
+def dot(A, B, mod):
+    r = len(A)
+    c = len(B[0])
+    m = len(A[0])
+    res = [[0] * c for _ in range(r)]
+    for i in range(r):
+        for j in range(c):
+            for k in range(m):
+                res[i][j] += (A[i][k] * B[k][j]) % mod
+                res[i][j] %= mod
+    return res
+
+
+def rec_pow(k, n, mod):
+    if n == 1:
         return k
+
+    k2 = dot(k, k, mod)
+    if n % 2 == 0:
+        return rec_pow(k2, n//2, mod)
     else:
-        return np.mod(np.dot(k, rec_pow(k1, n-cnt, mod)), mod)
+        return dot(rec_pow(k2, n//2, mod), k, mod)
 
 
 def main():
     input = sys.stdin.readline
     L, A, B, M = map(int, input().split())
 
-    digits = [0] * 18
     cnt = 0
-    for d in range(18):
-        div = max(0, (10**(d+1) - 1 - A) // B)
-        if 10**d <= A <= 10**(d+1):
-            div += 1
-        if div + cnt >= L:
-            div = L - cnt
-        if div == 0:
+    s = [[0, A%M, 1]]
+    for d in range(1, 19):
+        n = 0
+        if 10**(d-1) <= A <= 10**d:
+            n += 1
+
+        div = max(0, (10**d - 1 - A) // B)
+        div = min(div, L-1)
+        n += div - cnt
+        if n == 0:
             continue
 
-        digits[d] = div - cnt
-        cnt += div
-        print('cnt:', cnt, 'div:', div)
-        if cnt >= L:
+        k = [[pow(10, d, M), 0, 0],\
+             [1, 1, 0],\
+             [0, B%M, 1]]
+        s = dot(s, rec_pow(k, n, M), M)
+
+        cnt = div
+        if cnt >= L-1:
             break
 
-    print(digits)
-    k = np.identity(3, dtype=np.int64)
-    for d in range(18):
-        if digits[d] == 0:
-            continue
-
-        kd = np.array([[10**(d+1), 0, 0],\
-                       [1, 1, 0],\
-                       [0, B, 1]],\
-                       dtype=np.int64)
-        kd = np.mod(kd, M)
-        k = np.dot(k, rec_pow(kd, digits[d], M))
-        k = np.mod(k, M)
-        print(k, '\n')
-
-    s = np.array([0, A, 1])
-    seq = np.mod(np.dot(s, k), M)
-    return seq[0]
+    return s[0][0]
 
 if __name__ == '__main__':
     print(main())
