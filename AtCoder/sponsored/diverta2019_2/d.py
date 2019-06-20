@@ -1,5 +1,21 @@
 import sys
-import numpy as np
+
+def trade(n, a, b):
+    a0, a1, a2 = a
+    b0, b1, b2 = b
+    dp = [0] * (n+1)
+    for i in range(1, n+1):
+        gold, silver, copper = 0, 0, 0
+        if i >= a0:
+            gold = dp[i-a0] + b0
+        if i >= a1:
+            silver = dp[i-a1] + b1
+        if i >= a2:
+            copper = dp[i-a2] + b2
+        dp[i] = max(i, gold, silver, copper)
+
+    return dp[n]
+
 
 def main():
     input = sys.stdin.readline
@@ -7,22 +23,10 @@ def main():
     A = list(map(int, input().split()))
     B = list(map(int, input().split()))
 
-    dp = np.zeros(N+1, dtype=np.int)
-    for i in range(3):
-        a = A[i]
-        n = N // a
-        for k in range(1, n+1):
-            dp[k*a:] = np.maximum(dp[k*a:], dp[:N-k*a+1] + k*B[i])
-
-    M = dp[N]
-    dp = np.zeros(M+1, dtype=np.int)
-    for i in range(3):
-        a = B[i]
-        n = M // a
-        for k in range(1, n+1):
-            dp[k*a:] = np.maximum(dp[k*a:], dp[:M-k*a+1] + k*A[i])
-
-    return dp[M]
+    # Trade A -> B
+    M = trade(N, A, B)
+    # Trade B -> A
+    return trade(M, B, A)
 
 
 if __name__ == '__main__':
