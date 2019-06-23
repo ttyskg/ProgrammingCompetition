@@ -4,16 +4,15 @@ def main():
     N, X = map(int, input().split())
     A = list(map(int, input().split()))
 
-    cnt = 0
+    cnt = 1
     D = 0
     for a in A:
         D += a
-        cnt += 1
         if D > X:
-            cnt -= 1
             break
+        cnt += 1
 
-    return cnt+1
+    return cnt
 
 
 if __name__ == '__main__':
