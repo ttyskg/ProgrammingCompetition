@@ -16,10 +16,10 @@ def main():
     A, B, C, D = map(int, input().split())
     E = lcm(C, D)
 
-    total = B - A + 1
-    mul_c = max(0, B // C) - max(0, (A-1) // C)
-    mul_d = max(0, B // D) - max(0, (A-1) // D)
-    mul_e = max(0, B // E) - max(0, (A-1) // E)
+    total = B - (A-1)
+    mul_c = B // C - (A-1) // C
+    mul_d = B // D - (A-1) // D
+    mul_e = B // E - (A-1) // E
     return total - (mul_c + mul_d - mul_e)
 
 
