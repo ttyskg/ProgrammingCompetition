@@ -1,5 +1,5 @@
 import sys
-from collections import defaultdict, deque
+from collections import defaultdict
 sys.setrecursionlimit(10**6)
 
 def main():
@@ -45,35 +45,13 @@ def main():
             make_doubling(n, node)
     make_doubling(0, 0)
 
-    def find_lca(a, b):
-        """ Find the lowest common ancestor of A and B."""
-        pa = parents[a]
-        pb = parents[b]
-        if pa == pb:
-            return pa
-
-        i = 1
-        while doubling[a][i] != doubling[b][i]:
-            i += 1
-
-        a = doubling[a][i-1]
-        b = doubling[b][i-1]
-        return find_lca(a, b)
-
-    Q = int(input())
-    for _ in range(Q):
-        ans = 0
-        a, b = map(int, input().split())
-        a, b = a-1, b-1
-
-        # node 'a' is always far from root compared to the 'b'.
+    def make_same_depth(a, b):
+        # Node A is always more far from root than node B.
         if depths[a] < depths[b]:
             a, b = b, a
-        diff = depths[a] - depths[b]
 
-        ans = diff
-        # Make node A and node B the same depth.
         i = 0
+        diff = depths[a] - depths[b]
         while diff > 0:
             bit = 1 << i
             if diff & bit:
@@ -81,12 +59,38 @@ def main():
                 diff ^= bit
             i += 1
 
+        return a, b
+
+    def find_lca(a, b):
+        """ Find the lowest common ancestor of A and B."""
+        a, b = make_same_depth(a, b)
         if a == b:
-            print(ans + 1)
-        else:
-            lca = find_lca(a, b)
-            ans += (depths[a] - depths[lca]) * 2 + 1
-            print(ans)
+            return a
+
+        def f(a, b):
+            pa = parents[a]
+            pb = parents[b]
+            if pa == pb:
+                return pa
+
+            i = 1
+            while doubling[a][i] != doubling[b][i]:
+                i += 1
+
+            a = doubling[a][i-1]
+            b = doubling[b][i-1]
+            return f(a, b)
+
+        return f(a, b)
+
+    Q = int(input())
+    for _ in range(Q):
+        ans = 0
+        a, b = map(int, input().split())
+        a, b = a-1, b-1
+
+        lca = find_lca(a, b)
+        print(depths[a] + depths[b] - 2 * depths[lca] + 1)
 
 
 if __name__ == '__main__':
