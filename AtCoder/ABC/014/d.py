@@ -16,60 +16,77 @@ def main():
     # depth[i] is depth of i-th node from 0-th node.
     parents = [0] * N
     depths = [0] * N
-    def make_tree(parent, node):
+    visited = [False] * N
+    def make_tree(node):
+        visited[node] = True
         for child in edges[node]:
-            if child == parent:
+            if visited[child]:
                 continue
             parents[child] = node
             depths[child] = depths[node] + 1
-            make_tree(node, child)
-    make_tree(0, 0)
+            make_tree(child)
+    make_tree(0)
 
-    N2 = len(bin(N)) - 2
-    doubling = [[0] * N2 for _ in range(N)]
+    B = 0
+    while 2**B < N:
+        B += 1
+    doubling = [[0] * B for _ in range(N)]
     def make_doubling(node, parent):
+        # Update doubling parents of targeted "node".
         doubling[node][0] = parent
-        for i in range(1, N2):
+        for i in range(1, B):
             doubling[node][i] = doubling[doubling[node][i-1]][i-1]
             if doubling[node][i] == 0:
                 break
+        # Recursive update for chiled node.
         for n in edges[node]:
             if n == parent:
                 continue
             make_doubling(n, node)
     make_doubling(0, 0)
 
-    print(doubling)
-    return 0
+    def find_lca(a, b):
+        """ Find the lowest common ancestor of A and B."""
+        pa = parents[a]
+        pb = parents[b]
+        if pa == pb:
+            return pa
 
-    doubling = dict()
-    for child in d[0]:
-        doubling[child] = [0]
+        i = 1
+        while doubling[a][i] != doubling[b][i]:
+            i += 1
 
-    visited = [False] * N
-    visited[0] = True
-    for child in d[0]:
-        visited[child] = True
-    q = deque()
-    q.extend(d[0])
-
-
-
-
-
-
-
-
-
-    for i in range(N):
-        aa
+        a = doubling[a][i-1]
+        b = doubling[b][i-1]
+        return find_lca(a, b)
 
     Q = int(input())
     for _ in range(Q):
+        ans = 0
         a, b = map(int, input().split())
-        q = deque()
-        q.append(a)
-        print(bfs(d, q, b, 0, set()) + 1)
+        a, b = a-1, b-1
+
+        # node 'a' is always far from root compared to the 'b'.
+        if depths[a] < depths[b]:
+            a, b = b, a
+        diff = depths[a] - depths[b]
+
+        ans = diff
+        # Make node A and node B the same depth.
+        i = 0
+        while diff > 0:
+            bit = 1 << i
+            if diff & bit:
+                a = doubling[a][i]
+                diff ^= bit
+            i += 1
+
+        if a == b:
+            print(ans + 1)
+        else:
+            lca = find_lca(a, b)
+            ans += (depths[a] - depths[lca]) * 2 + 1
+            print(ans)
 
 
 if __name__ == '__main__':
