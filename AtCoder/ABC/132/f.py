@@ -6,7 +6,10 @@ def main():
     N, K = map(int, input().split())
     n = int(N**(0.5))
 
-    dp = [[0] * n for _ in range(K)]
+    dp = [[0] * (n+1) for _ in range(K)]
+    A = [0] * (n+1)
+    for i in range(1, n+1):
+        aa
 
     return n
 
